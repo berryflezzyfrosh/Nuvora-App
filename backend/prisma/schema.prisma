@@ -1,0 +1,241 @@
+// Prisma schema for Nuvora Chat Application
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  username          String    @unique
+  firstName         String
+  lastName          String
+  avatar            String?
+  bio               String?
+  status            UserStatus @default(OFFLINE)
+  lastSeen          DateTime  @default(now())
+  isEmailVerified   Boolean   @default(false)
+  emailVerificationToken String?
+  passwordHash      String
+  refreshToken      String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Relationships
+  sentMessages      Message[] @relation("MessageSender")
+  receivedMessages  Message[] @relation("MessageReceiver")
+  chatMembers       ChatMember[]
+  messageReactions  MessageReaction[]
+  blockedUsers      UserBlock[] @relation("BlockedBy")
+  blockedByUsers    UserBlock[] @relation("BlockedUser")
+  reports           Report[] @relation("ReportedBy")
+  reportedBy        Report[] @relation("ReportedUser")
+  notifications     Notification[]
+  
+  @@map("users")
+}
+
+model Chat {
+  id          String    @id @default(cuid())
+  name        String?
+  description String?
+  type        ChatType  @default(DIRECT)
+  avatar      String?
+  isPublic    Boolean   @default(false)
+  createdBy   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lastMessageAt DateTime?
+  
+  // Relationships
+  members     ChatMember[]
+  messages    Message[]
+  
+  @@map("chats")
+}
+
+model ChatMember {
+  id        String     @id @default(cuid())
+  chatId    String
+  userId    String
+  role      MemberRole @default(MEMBER)
+  joinedAt  DateTime   @default(now())
+  leftAt    DateTime?
+  isMuted   Boolean    @default(false)
+  
+  // Relationships
+  chat      Chat       @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([chatId, userId])
+  @@map("chat_members")
+}
+
+model Message {
+  id          String      @id @default(cuid())
+  content     String?
+  type        MessageType @default(TEXT)
+  chatId      String
+  senderId    String
+  receiverId  String?     // For direct messages
+  replyToId   String?     // For threaded messages
+  isEdited    Boolean     @default(false)
+  editedAt    DateTime?
+  isDeleted   Boolean     @default(false)
+  deletedAt   DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // File attachments
+  attachments MessageAttachment[]
+  
+  // Relationships
+  chat        Chat        @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  sender      User        @relation("MessageSender", fields: [senderId], references: [id])
+  receiver    User?       @relation("MessageReceiver", fields: [receiverId], references: [id])
+  replyTo     Message?    @relation("MessageReply", fields: [replyToId], references: [id])
+  replies     Message[]   @relation("MessageReply")
+  reactions   MessageReaction[]
+  readReceipts MessageReadReceipt[]
+  
+  @@map("messages")
+}
+
+model MessageAttachment {
+  id        String  @id @default(cuid())
+  messageId String
+  fileName  String
+  fileUrl   String
+  fileType  String
+  fileSize  Int
+  
+  // Relationships
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  
+  @@map("message_attachments")
+}
+
+model MessageReaction {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+  
+  // Relationships
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([messageId, userId, emoji])
+  @@map("message_reactions")
+}
+
+model MessageReadReceipt {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  readAt    DateTime @default(now())
+  
+  // Relationships
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  
+  @@unique([messageId, userId])
+  @@map("message_read_receipts")
+}
+
+model UserBlock {
+  id        String   @id @default(cuid())
+  blockerId String
+  blockedId String
+  reason    String?
+  createdAt DateTime @default(now())
+  
+  // Relationships
+  blocker   User     @relation("BlockedBy", fields: [blockerId], references: [id])
+  blocked   User     @relation("BlockedUser", fields: [blockedId], references: [id])
+  
+  @@unique([blockerId, blockedId])
+  @@map("user_blocks")
+}
+
+model Report {
+  id         String     @id @default(cuid())
+  reporterId String
+  reportedId String
+  reason     String
+  description String?
+  status     ReportStatus @default(PENDING)
+  createdAt  DateTime   @default(now())
+  resolvedAt DateTime?
+  
+  // Relationships
+  reporter   User       @relation("ReportedBy", fields: [reporterId], references: [id])
+  reported   User       @relation("ReportedUser", fields: [reportedId], references: [id])
+  
+  @@map("reports")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  data      Json?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  
+  // Relationships
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("notifications")
+}
+
+// Enums
+enum UserStatus {
+  ONLINE
+  OFFLINE
+  AWAY
+  BUSY
+}
+
+enum ChatType {
+  DIRECT
+  GROUP
+  CHANNEL
+  PUBLIC
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  MODERATOR
+  MEMBER
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  FILE
+  SYSTEM
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+enum NotificationType {
+  MESSAGE
+  MENTION
+  FRIEND_REQUEST
+  SYSTEM
+}
