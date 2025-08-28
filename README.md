@@ -107,7 +107,7 @@ Nuvora is a production-ready, scalable chat application built with modern techno
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-org/nuvora-chat.git
+   git clone https://github.com/berryflezzyfrosh/Nuvora-App.git
    cd nuvora-chat
    ```
 
