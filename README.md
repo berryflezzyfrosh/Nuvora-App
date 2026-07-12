@@ -1,354 +1,136 @@
-# Nuvora Chat - Enterprise-Grade Chat Application
+# WhatsApp Clone — React + Vite + Supabase
 
-![Nuvora Logo](https://via.placeholder.com/200x80/6366f1/ffffff?text=Nuvora+Chat)
+A full-featured WhatsApp clone with end-to-end encryption, real-time messaging, group chats, status/stories, voice/video calls, and more.
 
-Nuvora is a production-ready, scalable chat application built with modern technologies and designed to handle billions of users globally. It features real-time messaging, end-to-end encryption, file sharing, and comprehensive admin tools.
+## Features
 
-## 🚀 Features
+- **Authentication**: Email/password signup/login via Supabase Auth
+- **E2EE**: Messages encrypted client-side using ECDH key exchange + AES-GCM (Web Crypto API). Server only stores ciphertext.
+- **Messaging**: Real-time 1-on-1 and group chats with replies, reactions, edit, delete, forward, and read receipts (✓ sent, ✓✓ delivered, blue ✓✓ read)
+- **Media**: Image, video, audio, document, and voice message sharing via Supabase Storage
+- **Calls**: Voice/video call UI with WebRTC signaling via Supabase Realtime
+- **Status/Stories**: Post text/image statuses that expire in 24 hours, with privacy controls
+- **Contacts**: Global people directory, block/unblock, mute, archive
+- **Presence**: Online/offline status, last seen, typing indicators
+- **Settings**: Dark/light theme, notification toggles, read receipt toggles
+- **Security**: RLS on all tables, zero-knowledge architecture, session audit log, inactivity auto-logout
 
-### Core Messaging
-- **Real-time bidirectional messaging** with Socket.io
-- **Message persistence** with PostgreSQL
-- **Typing indicators** with debouncing
-- **Read receipts** and delivery status
-- **Message editing and deletion** with timestamps
-- **Message reactions** and threading
-- **Message search** with full-text indexing
+## Tech Stack
 
-### Chat Types
-- **Direct Messages**: One-on-one conversations
-- **Group Chats**: Multi-user conversations with admin controls
-- **Channels**: Public/private channels with topic-based discussions
-- **Broadcast**: One-to-many messaging for announcements
+- **Frontend**: React 18 + Vite
+- **Backend**: Supabase (Auth, Realtime, Storage, PostgreSQL with RLS)
+- **Styling**: Tailwind CSS
+- **State**: Zustand
+- **Encryption**: Web Crypto API (ECDH + AES-GCM)
+- **Routing**: React Router v6 (HashRouter for GitHub Pages)
 
-### User Management
-- **User Authentication**: Secure login/signup with JWT
-- **User Profiles**: Customizable profiles with avatars
-- **Online Status**: Real-time presence indicators
-- **User Roles**: Admin, moderator, and member permissions
+## Setup
 
-### File Sharing
-- **File Upload**: Support for images, documents, and media
-- **File Preview**: In-chat preview for images and documents
-- **File Storage**: Secure cloud storage integration
-- **File Compression**: Automatic optimization for performance
+### 1. Install dependencies
 
-### Security & Privacy
-- **End-to-End Encryption**: Military-grade message encryption
-- **Data Privacy**: GDPR compliant data handling
-- **Secure Authentication**: Multi-factor authentication support
-- **Rate Limiting**: Protection against spam and abuse
-
-### Enterprise Features
-- **Admin Dashboard**: Comprehensive management interface
-- **Analytics**: Usage statistics and performance metrics
-- **Moderation Tools**: Content filtering and user management
-- **API Integration**: RESTful API for third-party integrations
-- **Webhooks**: Real-time event notifications
-- **Custom Branding**: White-label solutions available
-
-## 🛠 Technology Stack
-
-### Frontend
-- **React 18** with TypeScript
-- **Redux Toolkit** for state management
-- **Tailwind CSS** for styling
-- **Socket.io Client** for real-time communication
-- **Vite** for fast development and building
-
-### Backend
-- **Node.js** with Express.js
-- **TypeScript** for type safety
-- **Socket.io** for WebSocket connections
-- **Prisma ORM** with PostgreSQL
-- **JWT** for authentication
-- **Multer** for file uploads
-
-### Infrastructure
-- **Docker** containerization
-- **PostgreSQL** database
-- **Redis** for caching and sessions
-- **Nginx** reverse proxy
-- **AWS S3** for file storage (configurable)
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+ 
-- Docker and Docker Compose
-- PostgreSQL 14+
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/nuvora-app.git
-   cd nuvora-app
-   ```
-
-2. **Install dependencies**
-   ```bash
-   # Install root dependencies
-   npm install
-   
-   # Install frontend dependencies
-   cd frontend && npm install
-   
-   # Install backend dependencies
-   cd ../backend && npm install
-   ```
-
-3. **Environment Setup**
-   ```bash
-   # Copy environment files
-   cp backend/.env.example backend/.env
-   cp frontend/.env.example frontend/.env
-   
-   # Update the environment variables with your configuration
-   ```
-
-4. **Database Setup**
-   ```bash
-   # Start PostgreSQL with Docker
-   docker-compose up -d postgres
-   
-   # Run database migrations
-   cd backend && npx prisma migrate dev
-   
-   # Seed the database (optional)
-   npx prisma db seed
-   ```
-
-5. **Start the Application**
-   ```bash
-   # Start all services with Docker Compose
-   docker-compose up
-   
-   # Or start individually for development
-   # Terminal 1: Backend
-   cd backend && npm run dev
-   
-   # Terminal 2: Frontend  
-   cd frontend && npm run dev
-   ```
-
-6. **Access the Application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:5000
-   - Database: localhost:5432
-
-## 📱 Usage
-
-### Basic Chat Operations
-
-1. **Sign Up/Login**
-   - Create an account or login with existing credentials
-   - Verify email address (if email verification is enabled)
-
-2. **Start Chatting**
-   - Click on a user to start a direct message
-   - Join existing channels or create new ones
-   - Send messages, files, and reactions
-
-3. **Manage Conversations**
-   - Create group chats and invite members
-   - Set chat descriptions and rules
-   - Manage member permissions
-
-### Advanced Features
-
-1. **File Sharing**
-   - Drag and drop files into the chat
-   - Preview images and documents inline
-   - Download shared files
-
-2. **Search and Discovery**
-   - Search messages across all conversations
-   - Find users and channels
-   - Browse message history
-
-3. **Customization**
-   - Update profile information and avatar
-   - Set notification preferences
-   - Choose theme and display options
-
-## 🔧 Configuration
-
-### Environment Variables
-
-#### Backend (.env)
-```env
-# Database
-DATABASE_URL="postgresql://username:password@localhost:5432/nuvora"
-
-# JWT
-JWT_SECRET="your-super-secret-jwt-key"
-JWT_EXPIRES_IN="7d"
-
-# Server
-PORT=5000
-NODE_ENV="development"
-
-# File Upload
-MAX_FILE_SIZE="10MB"
-UPLOAD_PATH="./uploads"
-
-# Redis (optional)
-REDIS_URL="redis://localhost:6379"
-```
-
-#### Frontend (.env)
-```env
-# API Configuration
-VITE_API_URL="http://localhost:5000"
-VITE_SOCKET_URL="http://localhost:5000"
-
-# App Configuration
-VITE_APP_NAME="Nuvora Chat"
-VITE_MAX_FILE_SIZE="10485760"
-```
-
-## 🏗 Architecture
-
-### System Architecture
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   React Client  │    │  Express Server │    │   PostgreSQL    │
-│                 │◄──►│                 │◄──►│    Database     │
-│  - Redux Store  │    │  - Socket.io    │    │                 │
-│  - Components   │    │  - REST API     │    │  - User Data    │
-│  - Real-time UI │    │  - Auth Layer   │    │  - Messages     │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         │              ┌─────────────────┐              │
-         │              │      Redis      │              │
-         └──────────────►│                 │◄─────────────┘
-                        │  - Sessions     │
-                        │  - Cache        │
-                        │  - Pub/Sub      │
-                        └─────────────────┘
-```
-
-### Database Schema
-- **Users**: User accounts and profiles
-- **Conversations**: Chat rooms and direct messages  
-- **Messages**: Individual messages with metadata
-- **Participants**: User-conversation relationships
-- **Files**: Uploaded file metadata
-
-## 🧪 Testing
-
-### Run Tests
 ```bash
-# Backend tests
-cd backend && npm test
-
-# Frontend tests  
-cd frontend && npm test
-
-# E2E tests
-npm run test:e2e
+npm install
 ```
 
-### Test Coverage
+### 2. Configure environment variables
+
+Create a `.env` file in the project root:
+
+```
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### 3. Run the dev server
+
 ```bash
-# Generate coverage report
-npm run test:coverage
+npm run dev
 ```
 
-## 🚀 Deployment
+### 4. Build for production
 
-### Docker Deployment
 ```bash
-# Build and deploy with Docker Compose
-docker-compose -f docker-compose.prod.yml up -d
+npm run build
 ```
 
-### Manual Deployment
+## Supabase Setup
+
+1. Create a new Supabase project at [supabase.com](https://supabase.com)
+2. The SQL migrations are in `supabase/migrations/` — apply them via the Supabase SQL Editor
+3. Enable Email auth (no email confirmation needed for development)
+4. The `media` storage bucket is created automatically by the migration
+5. Copy your project URL and anon key into `.env`
+
+## GitHub Pages Deployment
+
+### 1. Update the base path
+
+In `vite.config.js`, the `base` is set to `"./"` for relative paths. If you want a specific repo path, change it to `"/your-repo-name/"`.
+
+### 2. Deploy
+
 ```bash
-# Build frontend
-cd frontend && npm run build
-
-# Build backend
-cd backend && npm run build
-
-# Start production server
-npm start
+npm run deploy
 ```
 
-### Environment-Specific Configurations
-- **Development**: Hot reloading, debug logging
-- **Staging**: Production-like environment for testing
-- **Production**: Optimized builds, error tracking, monitoring
+This runs `vite build` and then deploys the `dist/` folder to GitHub Pages using the `gh-pages` package.
 
-## 📊 Performance
+### 3. Enable GitHub Pages
 
-### Scalability Features
-- **Horizontal Scaling**: Load balancer support
-- **Database Optimization**: Indexed queries, connection pooling
-- **Caching Strategy**: Redis for sessions and frequently accessed data
-- **CDN Integration**: Static asset delivery optimization
+In your GitHub repo: **Settings → Pages → Source → Deploy from branch → `gh-pages` branch → `/ (root)`**
 
-### Performance Metrics
-- **Message Delivery**: < 100ms average latency
-- **Concurrent Users**: Supports 10,000+ simultaneous connections
-- **Database Performance**: Optimized for millions of messages
-- **File Upload**: Chunked upload for large files
+### 4. Routing
 
-## 🔒 Security
+The app uses `HashRouter` (not `BrowserRouter`) so routes work on GitHub Pages without server configuration. A `404.html` fallback is included for SPA routing support.
 
-### Security Measures
-- **Authentication**: JWT with refresh tokens
-- **Authorization**: Role-based access control
-- **Data Encryption**: AES-256 encryption for sensitive data
-- **Input Validation**: Comprehensive input sanitization
-- **Rate Limiting**: Protection against abuse and spam
-- **CORS Configuration**: Secure cross-origin requests
+## File Structure
 
-### Privacy Compliance
-- **GDPR Compliance**: Data portability and deletion rights
-- **Data Minimization**: Collect only necessary information
-- **Audit Logging**: Track all administrative actions
-- **Regular Security Audits**: Automated vulnerability scanning
+```
+├── index.html
+├── vite.config.js
+├── tailwind.config.js
+├── postcss.config.js
+├── package.json
+├── public/
+│   └── 404.html
+├── src/
+│   ├── main.jsx
+│   ├── App.jsx
+│   ├── index.css
+│   ├── lib/
+│   │   ├── supabase.js      # Supabase client
+│   │   ├── crypto.js        # E2EE (ECDH + AES-GCM)
+│   │   ├── store.js         # Zustand store
+│   │   └── utils.js         # Helpers
+│   └── components/
+│       ├── Splash.jsx
+│       ├── AuthScreen.jsx
+│       ├── ChatApp.jsx
+│       ├── Sidebar.jsx
+│       ├── ChatWindow.jsx
+│       ├── MessageMenu.jsx
+│       ├── NewChatModal.jsx
+│       ├── MediaUploader.jsx
+│       ├── VoiceRecorder.jsx
+│       ├── People.jsx
+│       ├── Profile.jsx
+│       ├── Settings.jsx
+│       ├── StatusView.jsx
+│       ├── CallModal.jsx
+│       └── RealtimeManager.jsx
+└── supabase/
+    └── migrations/
+        └── create_whatsapp_schema.sql
+```
 
-## 🤝 Contributing
+## Security Architecture
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+- **E2EE**: Each user generates an ECDH key pair on signup. The public key is stored in the `profiles` table. To send a message, the sender derives a shared secret using their private key + the recipient's public key, then encrypts with AES-GCM. Only the recipient can decrypt.
+- **Zero-knowledge**: Supabase only stores `encrypted_content` (ciphertext) and `iv` (initialization vector). The server never has access to plaintext or encryption keys.
+- **RLS**: All 12 tables have Row Level Security enabled with authenticated-only access and ownership checks.
+- **Session audit**: Login sessions are logged in `session_log` with device info.
+- **Inactivity logout**: Auto-logout after 30 minutes of inactivity.
 
-### Development Workflow
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
+## License
 
-### Code Standards
-- **TypeScript**: Strict type checking enabled
-- **ESLint**: Consistent code formatting
-- **Prettier**: Automated code formatting
-- **Husky**: Pre-commit hooks for quality checks
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-### Documentation
-- [API Documentation](docs/api.md)
-- [User Guide](docs/user-guide.md)
-- [Admin Guide](docs/admin-guide.md)
-
-### Community
-- [Discord Server](https://discord.gg/nuvora)
-- [GitHub Discussions](https://github.com/yourusername/nuvora-app/discussions)
-- [Stack Overflow](https://stackoverflow.com/questions/tagged/nuvora)
-
-### Commercial Support
-For enterprise support and custom development, contact us at [support@nuvora.com](mailto:support@nuvora.com)
-
----
-
-**Built with ❤️ by the Nuvora Team**
-
-*Nuvora Chat - Connecting the world, one message at a time.*
+MIT
